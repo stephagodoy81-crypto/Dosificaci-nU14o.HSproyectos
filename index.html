@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizarra Digital - Gestión y Elaboración de Proyectos Unidad 1 | Colegio Montano</title>
+    <!-- Carga de Tailwind CSS para utilidades responsivas y estructura -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Variables de Identidad Visual - Colegio Montano */
+        :root {
+            --azul-principal: #1269A8;
+            --amarillo-brillante: #F7D615;
+            --verde-grisaceo: #54887D;
+            --azul-claro: #88B5C7;
+            --verde-oliva: #A6B046;
+            --blanco-suave: #F2F5E9;
+            --texto-oscuro: #1e293b;
+        }
+
+        /* Tipografía Institucional */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e2e8f0;
+            color: var(--texto-oscuro);
+            margin: 0;
+            padding: 12px;
+        }
+
+        /* Marco de Pizarra Digital */
+        .pizarra-frame {
+            background-color: var(--blanco-suave);
+            border: 5px solid var(--amarillo-brillante);
+            border-radius: 12px;
+            box-shadow: 0 12px 30px rgba(18, 105, 168, 0.25);
+            overflow: hidden;
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            min-height: 90vh;
+            transition: all 0.3s ease;
+        }
+
+        /* Ajuste en Modo Pantalla Completa */
+        :fullscreen .pizarra-frame {
+            max-width: 100%;
+            height: 100vh;
+            border-radius: 0;
+            border-width: 4px;
+        }
+
+        /* Encabezado de la Pizarra */
+        .pizarra-header {
+            background: linear-gradient(135deg, var(--azul-principal) 0%, #0d4f80 100%);
+            color: white;
+            border-bottom: 4px solid var(--amarillo-brillante);
+        }
+
+        /* Botón Pantalla Completa */
+        .btn-fullscreen {
+            background-color: var(--amarillo-brillante);
+            color: var(--azul-principal);
+            font-weight: 700;
+            border-radius: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+        .btn-fullscreen:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            background-color: #ffe02e;
+        }
+
+        /* Navegación de Pestañas Horizontales */
+        .nav-tabs {
+            background-color: #ffffff;
+            border-bottom: 2px solid var(--azul-claro);
+            display: flex;
+            overflow-x: auto;
+            scrollbar-width: thin;
+        }
+
+        .tab-btn {
+            padding: 14px 18px;
+            font-weight: 700;
+            color: var(--verde-grisaceo);
+            border-bottom: 4px solid transparent;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-btn:hover {
+            background-color: var(--blanco-suave);
+            color: var(--azul-principal);
+        }
+
+        .tab-btn.active {
+            background-color: var(--azul-principal);
+            color: #ffffff;
+            border-bottom: 4px solid var(--amarillo-brillante);
+        }
+
+        /* Tarjetas y Contenedores Pedagógicos */
+        .card-montano {
+            background-color: #ffffff;
+            border-left: 5px solid var(--verde-grisaceo);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
+        }
+
+        .card-montano:hover {
+            transform: translateY(-2px);
+        }
+
+        .card-ejercicio {
+            background-color: rgba(136, 181, 199, 0.22);
+            border: 1px solid var(--azul-claro);
+            border-radius: 10px;
+        }
+
+        /* Etiquetas de Nivel y Categoría */
+        .badge-oliva {
+            background-color: var(--verde-oliva);
+            color: #ffffff;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 9999px;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-azul {
+            background-color: var(--azul-principal);
+            color: #ffffff;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 9999px;
+            font-size: 0.78rem;
+        }
+
+        .badge-amarillo {
+            background-color: var(--amarillo-brillante);
+            color: var(--azul-principal);
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+        }
+
+        /* Botón Mostrar / Ocultar Solución */
+        .btn-solucion {
+            background-color: var(--azul-principal);
+            color: white;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-solucion:hover {
+            background-color: var(--verde-grisaceo);
+        }
+
+        .caja-solucion {
+            background-color: #ffffff;
+            border-left: 4px solid var(--verde-oliva);
+            border-radius: 8px;
+            margin-top: 12px;
+            padding: 14px;
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .caja-solucion.visible {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Animación de secciones */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.35s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- MARCO PRINCIPAL DE PIZARRA DIGITAL -->
+    <div id="pizarra" class="pizarra-frame">
+        
+        <!-- ENCABEZADO INSTITUCIONAL -->
+        <header class="pizarra-header p-4 md:p-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <!-- Logo y Títulos -->
+                <div class="flex items-center gap-4">
+                    <div class="bg-white p-2 rounded-xl shadow-md shrink-0">
+                        <img 
+                            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyEop0yf6lZ7Jk9MILZxF1rBj4Oqs5esyhIQ&s" 
+                            alt="Logo Colegio Montano" 
+                            class="h-14 w-14 md:h-16 md:w-16 object-contain"
+                            onerror="this.src='https://placehold.co/80x80/1269A8/F7D615?text=CM'"
+                        >
+                    </div>
+                    <div>
+                        <div class="flex flex-wrap items-center gap-2 mb-1">
+                            <span class="badge-amarillo">COLEGIO MONTANO CORTIJO</span>
+                            <span class="text-xs md:text-sm font-semibold text-blue-100 bg-white/10 px-2.5 py-0.5 rounded-full">
+                                📅 18 de Enero al 5 de Marzo (7 Semanas)
+                            </span>
+                        </div>
+                        <h1 class="text-xl md:text-2xl lg:text-3xl font-bold tracking-tight text-white">
+                            Gestión y Elaboración de Proyectos — Unidad 1
+                        </h1>
+                        <p class="text-sm md:text-base text-blue-100 mt-0.5">
+                            <strong>Grado:</strong> 4to. Bachillerato en Ciencias y Letras &nbsp;|&nbsp; <strong>Docente:</strong> Stephany Godoy &nbsp;|&nbsp; <strong>Zona Total:</strong> 100 Pts (4 Módulos × 25 Pts)
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Botón Pantalla Completa -->
+                <button id="btnFullscreen" onclick="toggleFullscreen()" class="btn-fullscreen px-4 py-2.5 text-sm md:text-base self-end md:self-center shrink-0 flex items-center gap-2">
+                    <span id="fsIcon">⛶</span>
+                    <span id="fsText">Pantalla completa</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- MENÚ DE PESTAÑAS HORIZONTALES INTERACTIVAS -->
+        <nav class="nav-tabs" role="tablist">
+            <button class="tab-btn active" onclick="openTab(event, 'teoria')">
+                <span>📊</span> Teoría y Dosificación (4 Módulos)
+            </button>
+            <button class="tab-btn" onclick="openTab(event, 'planmejora')">
+                <span>🛠️</span> Plan de Mejora (5 Pts/Módulo)
+            </button>
+            <button class="tab-btn" onclick="openTab(event, 'ejemplos')">
+                <span>💡</span> Ejemplos Resueltos (15)
+            </button>
+            <button class="tab-btn" onclick="openTab(event, 'ejercicios')">
+                <span>✍️</span> Ejercicios Prácticos (15)
+            </button>
+            <button class="tab-btn" onclick="openTab(event, 'reflexion')">
+                <span>🧠</span> Reflexión Crítica
+            </button>
+            <button class="tab-btn" onclick="openTab(event, 'evaluacion')">
+                <span>✅</span> Evaluación Formativa
+            </button>
+        </nav>
+
+        <!-- CONTENIDO DEL LIENZO DE TRABAJO -->
+        <main class="p-4 md:p-8 flex-1 overflow-y-auto">
+
+            <!-- ===================================================================== -->
+            <!-- SECCIÓN 1: EXPLICACIÓN TEÓRICA Y DOSIFICACIÓN DE LOS 4 MÓDULOS        -->
+            <!-- ===================================================================== -->
+            <section id="teoria" class="tab-content active space-y-8">
+                
+                <!-- Banner Resumen de Unidad -->
+                <div class="bg-white p-5 rounded-xl border-2 border-[#54887D] shadow-sm">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-200 pb-4 mb-4">
+                        <div>
+                            <span class="badge-oliva mb-1 inline-block">Unidad 1: Introducción y Gestión del Proyecto</span>
+                            <h2 class="text-xl md:text-2xl font-bold text-[#1269A8]">Planificación Didáctica y Dosificación de Evaluación</h2>
+                            <p class="text-sm text-gray-600 mt-1">
+                                <strong>Competencia de Unidad:</strong> Utiliza los conceptos básicos de la formulación de proyectos y comprende el rol del gestor, el ciclo de vida y las áreas de conocimiento en la solución de problemas del entorno.
+                            </p>
+                        </div>
+                        <div class="flex flex-wrap gap-2 shrink-0">
+                            <span class="badge-azul">4 Módulos</span>
+                            <span class="badge-oliva">25 Pts c/u (inc. 5 Pts Mejora)</span>
+                            <span class="badge-amarillo">Total: 100 Pts</span>
+                        </div>
+                    </div>
+
+                    <!-- Leyenda de Modalidades de Trabajo -->
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 text-xs font-semibold text-center">
+                        <div class="p-2 rounded-lg bg-blue-50 text-[#1269A8] border border-blue-200">👤 Trabajo Individual</div>
+                        <div class="p-2 rounded-lg bg-teal-50 text-[#54887D] border border-teal-200">👥 Trabajo en Equipo</div>
+                        <div class="p-2 rounded-lg bg-amber-50 text-amber-800 border border-amber-200">🚀 Proyecto</div>
+                        <div class="p-2 rounded-lg bg-lime-50 text-lime-800 border border-lime-300">🏆 Logro / Integrado</div>
+                        <div class="p-2 rounded-lg bg-rose-50 text-rose-800 border border-rose-200">🛠️ Plan de Mejora (5 Pts)</div>
+                    </div>
+                </div>
+
+                <!-- GRID DE LOS 4 MÓDULOS (25 PTS CADA UNO) -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                    <!-- MÓDULO 1 -->
+                    <div class="card-montano p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="badge-azul">MÓDULO 1 • Semanas 1 y 2 (18 Ene - 29 Ene)</span>
+                                <span class="badge-amarillo">25 Puntos</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-[#1269A8] mb-2">Fundamentos, Objetivos y Características de los Proyectos</h3>
+                            <p class="text-sm text-gray-700 mb-4 bg-[#F2F5E9] p-3 rounded-lg">
+                                <strong>Contenidos:</strong> ¿Qué es un proyecto?; Objetivos de un proyecto (general y específicos); Características de los proyectos.
+                            </p>
+                            
+                            <!-- Tabla de Actividades Módulo 1 -->
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-[#1269A8] text-white">
+                                            <th class="p-2 rounded-tl-lg">Actividad</th>
+                                            <th class="p-2">Modalidad</th>
+                                            <th class="p-2 text-right rounded-tr-lg">Pts</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        <tr>
+                                            <td class="p-2 font-medium">1. Ensayo diagnóstico y definición propia de "Proyecto"</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-[#1269A8]">👤 Individual</span></td>
+                                            <td class="p-2 text-right font-bold">5 pts</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 font-medium">2. Taller de redacción de Objetivos (Metodología SMART)</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-[#54887D]">👥 Equipo</span></td>
+                                            <td class="p-2 text-right font-bold">5 pts</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 font-medium">3. Matriz comparativa de características de proyectos comunitarios</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-lime-700">🏆 Logro</span></td>
+                                            <td class="p-2 text-right font-bold">5 pts</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 font-medium">4. Perfil preliminar de idea de proyecto personal/comunal</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-amber-700">🚀 Proyecto</span></td>
+                                            <td class="p-2 text-right font-bold">5 pts</td>
+                                        </tr>
+                                        <tr class="bg-rose-50">
+                                            <td class="p-2 font-bold text-rose-900">5. Plan de Mejora M1: Clínica y reformulación de objetivos SMART</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-rose-800">🛠️ Plan Mejora</span></td>
+                                            <td class="p-2 text-right font-bold text-rose-900">5 pts</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-2 border-t border-gray-200 flex justify-between items-center text-sm font-bold text-[#54887D]">
+                            <span>Subtotal Módulo 1:</span>
+                            <span>25 / 25 Puntos</span>
+                        </div>
+                    </div>
+
+                    <!-- MÓDULO 2 -->
+                    <div class="card-montano p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="badge-azul">MÓDULO 2 • Semanas 3 y 4 (01 Feb - 12 Feb)</span>
+                                <span class="badge-amarillo">25 Puntos</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-[#1269A8] mb-2">Puntos Clave y Ciclo de Vida del Proyecto</h3>
+                            <p class="text-sm text-gray-700 mb-4 bg-[#F2F5E9] p-3 rounded-lg">
+                                <strong>Contenidos:</strong> Puntos clave de un proyecto (viabilidad, recursos, alcance); Ciclo de vida del proyecto (inicio, planificación, ejecución, cierre).
+                            </p>
+                            
+                            <!-- Tabla de Actividades Módulo 2 -->
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-[#1269A8] text-white">
+                                            <th class="p-2 rounded-tl-lg">Actividad</th>
+                                            <th class="p-2">Modalidad</th>
+                                            <th class="p-2 text-right rounded-tr-lg">Pts</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        <tr>
+                                            <td class="p-2 font-medium">1. Análisis de viabilidad de casos reales de proyectos</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-[#1269A8]">👤 Individual</span></td>
+                                            <td class="p-2 text-right font-bold">5 pts</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 font-medium">2. Infografía del Ciclo de Vida del Proyecto (Fases)</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-[#54887D]">👥 Equipo</span></td>
+                                            <td class="p-2 text-right font-bold">5 pts</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 font-medium">3. Matriz de hitos y entregables por fase del ciclo de vida</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-lime-700">🏆 Integrado</span></td>
+                                            <td class="p-2 text-right font-bold">5 pts</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 font-medium">4. Presentación ejecutiva de los puntos clave del proyecto</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-amber-700">🚀 Proyecto</span></td>
+                                            <td class="p-2 text-right font-bold">5 pts</td>
+                                        </tr>
+                                        <tr class="bg-rose-50">
+                                            <td class="p-2 font-bold text-rose-900">5. Plan de Mejora M2: Auditoría y ajuste de viabilidad/fases</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-rose-800">🛠️ Plan Mejora</span></td>
+                                            <td class="p-2 text-right font-bold text-rose-900">5 pts</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-2 border-t border-gray-200 flex justify-between items-center text-sm font-bold text-[#54887D]">
+                            <span>Subtotal Módulo 2:</span>
+                            <span>25 / 25 Puntos</span>
+                        </div>
+                    </div>
+
+                    <!-- MÓDULO 3 -->
+                    <div class="card-montano p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="badge-azul">MÓDULO 3 • Semana 5 (15 Feb - 19 Feb)</span>
+                                <span class="badge-amarillo">25 Puntos</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-[#1269A8] mb-2">Áreas de Conocimiento de la Gestión y el Gestor</h3>
+                            <p class="text-sm text-gray-700 mb-4 bg-[#F2F5E9] p-3 rounded-lg">
+                                <strong>Contenidos:</strong> Áreas de conocimiento de la gestión (alcance, tiempo, costo, calidad, recursos humanos, riesgos); Gestor del proyecto: competencias y funciones.
+                            </p>
+                            
+                            <!-- Tabla de Actividades Módulo 3 -->
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-[#1269A8] text-white">
+                                            <th class="p-2 rounded-tl-lg">Actividad</th>
+                                            <th class="p-2">Modalidad</th>
+                                            <th class="p-2 text-right rounded-tr-lg">Pts</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        <tr>
+                                            <td class="p-2 font-medium">1. Mapa conceptual de las Áreas de Conocimiento del PMI</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-[#1269A8]">👤 Individual</span></td>
+                                            <td class="p-2 text-right font-bold">5 pts</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 font-medium">2. Perfil de competencias blandas y duras del Gestor de Proyectos</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-[#54887D]">👥 Equipo</span></td>
+                                            <td class="p-2 text-right font-bold">5 pts</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 font-medium">3. Estudio de caso: Liderazgo y resolución de conflictos en la gestión</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-lime-700">🏆 Logro</span></td>
+                                            <td class="p-2 text-right font-bold">5 pts</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 font-medium">4. Role-play: Entrevista al equipo sobre funciones del gestor</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-amber-700">🚀 Proyecto</span></td>
+                                            <td class="p-2 text-right font-bold">5 pts</td>
+                                        </tr>
+                                        <tr class="bg-rose-50">
+                                            <td class="p-2 font-bold text-rose-900">5. Plan de Mejora M3: Simulación de crisis y plan de riesgos</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-rose-800">🛠️ Plan Mejora</span></td>
+                                            <td class="p-2 text-right font-bold text-rose-900">5 pts</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-2 border-t border-gray-200 flex justify-between items-center text-sm font-bold text-[#54887D]">
+                            <span>Subtotal Módulo 3:</span>
+                            <span>25 / 25 Puntos</span>
+                        </div>
+                    </div>
+
+                    <!-- MÓDULO 4 -->
+                    <div class="card-montano p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="badge-azul">MÓDULO 4 • Semanas 6 y 7 (22 Feb - 05 Mar)</span>
+                                <span class="badge-amarillo">25 Puntos</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-[#1269A8] mb-2">Diagrama de Flujo del Proyecto y Lista de Control</h3>
+                            <p class="text-sm text-gray-700 mb-4 bg-[#F2F5E9] p-3 rounded-lg">
+                                <strong>Contenidos:</strong> Diagrama de flujo del proyecto; Lista de control (Checklist de seguimiento y validación de actividades previas a la ejecución).
+                            </p>
+                            
+                            <!-- Tabla de Actividades Módulo 4 -->
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-[#1269A8] text-white">
+                                            <th class="p-2 rounded-tl-lg">Actividad</th>
+                                            <th class="p-2">Modalidad</th>
+                                            <th class="p-2 text-right rounded-tr-lg">Pts</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        <tr>
+                                            <td class="p-2 font-medium">1. Diseño de simbología y esquema de diagrama de flujo</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-[#1269A8]">👤 Individual</span></td>
+                                            <td class="p-2 text-right font-bold">5 pts</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 font-medium">2. Elaboración de Lista de Control (Checklist) de Unidad 1</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-[#54887D]">👥 Equipo</span></td>
+                                            <td class="p-2 text-right font-bold">5 pts</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 font-medium">3. Proyecto integrador: Diagrama de flujo y lista de control aplicada</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-amber-700">🚀 Proyecto</span></td>
+                                            <td class="p-2 text-right font-bold">5 pts</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 font-medium">4. Evaluación sumativa integradora de Unidad 1</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-lime-700">🏆 Integrado</span></td>
+                                            <td class="p-2 text-right font-bold">5 pts</td>
+                                        </tr>
+                                        <tr class="bg-rose-50">
+                                            <td class="p-2 font-bold text-rose-900">5. Plan de Mejora M4: Depuración de flujo y portafolio final</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-rose-800">🛠️ Plan Mejora</span></td>
+                                            <td class="p-2 text-right font-bold text-rose-900">5 pts</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-2 border-t border-gray-200 flex justify-between items-center text-sm font-bold text-[#54887D]">
+                            <span>Subtotal Módulo 4:</span>
+                            <span>25 / 25 Puntos</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- SÍNTESIS TEÓRICA DE LOS TEMAS DE LA UNIDAD -->
+                <div class="bg-white p-6 rounded-xl border border-[#88B5C7] shadow-sm space-y-4">
+                    <h3 class="text-xl font-bold text-[#1269A8] border-b-2 border-[#F7D615] pb-2">
+                        📚 Síntesis Conceptual de la Unidad 1 (4to. Bachillerato)
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm leading-relaxed">
+                        <div class="p-3 bg-[#F2F5E9] rounded-lg">
+                            <h4 class="font-bold text-[#54887D]">1. ¿Qué es un proyecto y sus objetivos?</h4>
+                            <p>Un <strong>proyecto</strong> es un esfuerzo temporal emprendido para crear un producto, servicio o resultado único que satisface una necesidad comunitaria o familiar. Los <strong>objetivos</strong> (General y Específicos bajo la metodología SMART) definen la meta clara y los pasos medibles para alcanzarla.</p>
+                        </div>
+                        <div class="p-3 bg-[#F2F5E9] rounded-lg">
+                            <h4 class="font-bold text-[#54887D]">2. Ciclo de Vida y Puntos Clave</h4>
+                            <p>El <strong>ciclo de vida</strong> comprende las fases secuenciales: Inicio, Planificación, Ejecución y Cierre. Los <strong>puntos clave</strong> garantizan la viabilidad técnica, económica y operativa antes de comprometer recursos en el terreno.</p>
+                        </div>
+                        <div class="p-3 bg-[#F2F5E9] rounded-lg">
+                            <h4 class="font-bold text-[#54887D]">3. Áreas de Conocimiento y el Gestor</h4>
+                            <p>La gestión abarca áreas como alcance, tiempo, costo, calidad y riesgos. El <strong>gestor del proyecto</strong> combina competencias técnicas con habilidades blandas (liderazgo, comunicación efectiva, negociación y resolución de conflictos).</p>
+                        </div>
+                        <div class="p-3 bg-[#F2F5E9] rounded-lg">
+                            <h4 class="font-bold text-[#54887D]">4. Diagrama de Flujo y Lista de Control</h4>
+                            <p>El <strong>diagrama de flujo</strong> grafica secuencialmente los procesos decisorios del proyecto mediante simbología estándar, mientras que la <strong>lista de control (checklist)</strong> valida que no se omita ningún requisito previo a la ejecución.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===================================================================== -->
+            <!-- SECCIÓN NUEVA: PLAN DE MEJORA POR MÓDULO (5 PUNTOS CADA UNO)          -->
+            <!-- ===================================================================== -->
+            <section id="planmejora" class="tab-content space-y-6">
+                <div class="bg-white p-5 rounded-xl border-2 border-[#1269A8] shadow-sm">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div>
+                            <span class="badge-oliva mb-1 inline-block">Estrategia de Nivelación y Excelencia Académica</span>
+                            <h2 class="text-xl md:text-2xl font-bold text-[#1269A8]">Plan de Mejora Continua por Módulo (5 Puntos c/u)</h2>
+                            <p class="text-sm text-gray-600 mt-1">
+                                Diseñado para fortalecer los aprendizajes clave de cada módulo, permitir la recuperación o perfeccionamiento de entregables y asegurar el dominio de las competencias de <strong>Gestión y Elaboración de Proyectos</strong>.
+                            </p>
+                        </div>
+                        <div class="flex flex-wrap gap-2 shrink-0">
+                            <span class="badge-azul">4 Planes de Mejora</span>
+                            <span class="badge-amarillo">5 Pts × Módulo = 20 Pts</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TARJETAS DETALLADAS DEL PLAN DE MEJORA POR MÓDULO -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                    <!-- PLAN DE MEJORA MÓDULO 1 -->
+                    <div class="card-montano p-5 border-l-4 border-rose-600 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="badge-azul">Módulo 1 • Semanas 1 y 2</span>
+                            <span class="badge-amarillo">Valor: 5 Puntos</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-[#1269A8]">🛠️ Plan de Mejora M1: Clínica de Objetivos SMART y Delimitación</h3>
+                        <div class="text-sm space-y-2 text-gray-700">
+                            <p><strong>🎯 Propósito de mejora:</strong> Corregir objetivos ambiguos, verbos no medibles y propuestas de proyecto demasiado amplias o carentes de necesidad comunitaria.</p>
+                            <div class="bg-[#F2F5E9] p-3 rounded-lg space-y-1">
+                                <p class="font-bold text-[#54887D]">Actividades de Nivelación / Perfeccionamiento:</p>
+                                <ul class="list-disc pl-5 space-y-1">
+                                    <li><strong>Diagnóstico de errores:</strong> Revisión con rúbrica de los objetivos redactados en las actividades 2 y 4.</li>
+                                    <li><strong>Taller de reescritura:</strong> Transformar 1 Objetivo General y 3 Específicos aplicando rigorosamente los 5 criterios SMART (Específico, Medible, Alcanzable, Relevante y Temporal).</li>
+                                    <li><strong>Sustentación breve:</strong> Justificación oral de 1 minuto explicando qué necesidad real resuelve el perfil del proyecto.</li>
+                                </ul>
+                            </div>
+                            <p class="text-xs font-semibold text-gray-600"><strong>📋 Criterio de evaluación (5 pts):</strong> Coherencia entre problema y objetivo general (2 pts) + 3 objetivos específicos medibles (2 pts) + entrega puntual y limpia (1 pt).</p>
+                        </div>
+                    </div>
+
+                    <!-- PLAN DE MEJORA MÓDULO 2 -->
+                    <div class="card-montano p-5 border-l-4 border-rose-600 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="badge-azul">Módulo 2 • Semanas 3 y 4</span>
+                            <span class="badge-amarillo">Valor: 5 Puntos</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-[#1269A8]">🛠️ Plan de Mejora M2: Auditoría de Viabilidad y Ciclo de Vida</h3>
+                        <div class="text-sm space-y-2 text-gray-700">
+                            <p><strong>🎯 Propósito de mejora:</strong> Reforzar la distinción entre fases del ciclo de vida (Inicio, Planificación, Ejecución, Cierre) y subsanar omisiones en el análisis de viabilidad técnica y económica.</p>
+                            <div class="bg-[#F2F5E9] p-3 rounded-lg space-y-1">
+                                <p class="font-bold text-[#54887D]">Actividades de Nivelación / Perfeccionamiento:</p>
+                                <ul class="list-disc pl-5 space-y-1">
+                                    <li><strong>Reconstrucción de hitos:</strong> Reordenar un caso desestructurado ubicando cada entregable en su fase correcta del ciclo de vida.</li>
+                                    <li><strong>Ficha de factibilidad:</strong> Completar la matriz de 3 viabilidades (técnica, económica y operativa) para el proyecto del equipo.</li>
+                                    <li><strong>Corrección de entregables:</strong> Ajustar las observaciones señaladas en la presentación ejecutiva.</li>
+                                </ul>
+                            </div>
+                            <p class="text-xs font-semibold text-gray-600"><strong>📋 Criterio de evaluación (5 pts):</strong> Ubicación exacta de entregables por fase (2 pts) + justificación de viabilidad real (2 pts) + corrección aplicada (1 pt).</p>
+                        </div>
+                    </div>
+
+                    <!-- PLAN DE MEJORA MÓDULO 3 -->
+                    <div class="card-montano p-5 border-l-4 border-rose-600 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="badge-azul">Módulo 3 • Semana 5</span>
+                            <span class="badge-amarillo">Valor: 5 Puntos</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-[#1269A8]">🛠️ Plan de Mejora M3: Simulación de Crisis y Áreas del PMI</h3>
+                        <div class="text-sm space-y-2 text-gray-700">
+                            <p><strong>🎯 Propósito de mejora:</strong> Afianzar la relación sistémica entre alcance, tiempo, costo, calidad y riesgos, así como las competencias de liderazgo del gestor ante conflictos.</p>
+                            <div class="bg-[#F2F5E9] p-3 rounded-lg space-y-1">
+                                <p class="font-bold text-[#54887D]">Actividades de Nivelación / Perfeccionamiento:</p>
+                                <ul class="list-disc pl-5 space-y-1">
+                                    <li><strong>Resolución de escenario crítico:</strong> Proponer acciones concretas como gestor ante un recorte de presupuesto o retraso de cronograma.</li>
+                                    <li><strong>Mini-matriz de riesgos:</strong> Identificar 3 riesgos del proyecto propio con su probabilidad, impacto y plan de mitigación.</li>
+                                    <li><strong>Autoevaluación de liderazgo:</strong> Reflexión escrita sobre dos competencias blandas a fortalecer en el equipo.</li>
+                                </ul>
+                            </div>
+                            <p class="text-xs font-semibold text-gray-600"><strong>📋 Criterio de evaluación (5 pts):</strong> Solución viable al caso de crisis (2 pts) + matriz de 3 riesgos con mitigación (2 pts) + reflexión crítica (1 pt).</p>
+                        </div>
+                    </div>
+
+                    <!-- PLAN DE MEJORA MÓDULO 4 -->
+                    <div class="card-montano p-5 border-l-4 border-rose-600 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="badge-azul">Módulo 4 • Semanas 6 y 7</span>
+                            <span class="badge-amarillo">Valor: 5 Puntos</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-[#1269A8]">🛠️ Plan de Mejora M4: Depuración de Diagrama de Flujo y Checklist</h3>
+                        <div class="text-sm space-y-2 text-gray-700">
+                            <p><strong>🎯 Propósito de mejora:</strong> Corregir errores de simbología estándar (óvalo, rectángulo, rombo) en diagramas de flujo y garantizar que la lista de control cubra todos los requisitos previos a la ejecución.</p>
+                            <div class="bg-[#F2F5E9] p-3 rounded-lg space-y-1">
+                                <p class="font-bold text-[#54887D]">Actividades de Nivelación / Perfeccionamiento:</p>
+                                <ul class="list-disc pl-5 space-y-1">
+                                    <li><strong>Depuración gráfica:</strong> Redibujar el diagrama de flujo asegurando conectores claros, bifurcaciones Sí/No en rombos y cierre lógico.</li>
+                                    <li><strong>Validación cruzada de Checklist:</strong> Intercambiar la lista de control con otro equipo para auditar ítems faltantes antes de la entrega final.</li>
+                                    <li><strong>Integración de portafolio:</strong> Compilar las versiones mejoradas de los 4 módulos en el expediente de Unidad 1.</li>
+                                </ul>
+                            </div>
+                            <p class="text-xs font-semibold text-gray-600"><strong>📋 Criterio de evaluación (5 pts):</strong> Simbología y lógica condicional correcta (2 pts) + checklist operativa completa (2 pts) + portafolio integrado (1 pt).</p>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ===================================================================== -->
+            <!-- SECCIÓN 2: EJEMPLOS RESUELTOS (5 BÁSICO, 5 INTERMEDIO, 5 AVANZADO)    -->
+            <!-- ===================================================================== -->
+            <section id="ejemplos" class="tab-content space-y-8">
+                <div class="bg-white p-5 rounded-xl border-l-4 border-[#1269A8]">
+                    <h2 class="text-2xl font-bold text-[#1269A8]">Ejemplos Resueltos Paso a Paso</h2>
+                    <p class="text-sm text-gray-600">15 modelos desarrollados progresivamente para dominar la gestión y elaboración de proyectos.</p>
+                </div>
+
+                <!-- NIVEL BÁSICO -->
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2">
+                        <span class="badge-oliva">Nivel Básico</span>
+                        <h3 class="text-lg font-bold text-[#54887D]">Definiciones y Componentes Fundamentales</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="card-montano p-4">
+                            <span class="text-xs font-bold text-[#1269A8]">Ejemplo Básico 1 • Definición de Proyecto</span>
+                            <p class="font-semibold mt-1">¿Por qué se afirma que un proyecto tiene carácter <strong>temporal</strong>?</p>
+                            <p class="text-sm text-gray-700 mt-2 bg-[#F2F5E9] p-2.5 rounded">
+                                <strong>Resolución:</strong> Porque todo proyecto tiene un principio definido (fecha de inicio) y un final definido (cuando se alcanza el objetivo o se cancela porque no se puede cumplir la meta). No es una operación continua.
+                            </p>
+                        </div>
+
+                        <div class="card-montano p-4">
+                            <span class="text-xs font-bold text-[#1269A8]">Ejemplo Básico 2 • Objetivos (SMART)</span>
+                            <p class="font-semibold mt-1">Transforma el objetivo vago: <em>"Quiero hacer un proyecto ambiental"</em> en un objetivo <strong>Específico y Medible</strong>.</p>
+                            <p class="text-sm text-gray-700 mt-2 bg-[#F2F5E9] p-2.5 rounded">
+                                <strong>Resolución:</strong> <em>"Reciclar 500 kg de residuos plásticos en la comunidad escolar durante los primeros tres meses del ciclo lectivo."</em>
+                            </p>
+                        </div>
+
+                        <div class="card-montano p-4">
+                            <span class="text-xs font-bold text-[#1269A8]">Ejemplo Básico 3 • Características de los Proyectos</span>
+                            <p class="font-semibold mt-1">¿Qué significa que un proyecto genere un <strong>resultado único</strong>?</p>
+                            <p class="text-sm text-gray-700 mt-2 bg-[#F2F5E9] p-2.5 rounded">
+                                <strong>Resolución:</strong> Significa que aunque existan proyectos similares, el producto o servicio generado posee particularidades derivadas del contexto, beneficiarios y necesidades específicas donde se implementó.
+                            </p>
+                        </div>
+
+                        <div class="card-montano p-4">
+                            <span class="text-xs font-bold text-[#1269A8]">Ejemplo Básico 4 • Ciclo de Vida del Proyecto</span>
+                            <p class="font-semibold mt-1">Identifica a qué fase del ciclo de vida corresponde la actividad: <em>"Redactar el presupuesto detallado y el cronograma de actividades"</em>.</p>
+                            <p class="text-sm text-gray-700 mt-2 bg-[#F2F5E9] p-2.5 rounded">
+                                <strong>Resolución:</strong> Pertenece a la fase de <strong>Planificación</strong>.
+                            </p>
+                        </div>
+
+                        <div class="card-montano p-4 md:col-span-2">
+                            <span class="text-xs font-bold text-[#1269A8]">Ejemplo Básico 5 • Simbología de Diagrama de Flujo</span>
+                            <p class="font-semibold mt-1">¿Qué representan el <strong>rectángulo</strong> y el <strong>rombo</strong> en un diagrama de flujo de proyectos?</p>
+                            <p class="text-sm text-gray-700 mt-2 bg-[#F2F5E9] p-2.5 rounded">
+                                <strong>Resolución:</strong> El <em>rectángulo</em> representa una <strong>acción o proceso a ejecutar</strong>, mientras que el <em>rombo</em> representa una <strong>decisión o bifurcación condicional</strong> (Sí / No).
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NIVEL INTERMEDIO -->
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2">
+                        <span class="badge-azul">Nivel Intermedio</span>
+                        <h3 class="text-lg font-bold text-[#54887D]">Análisis de Fases, Viabilidad y Competencias del Gestor</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="card-montano p-4">
+                            <span class="text-xs font-bold text-[#54887D]">Ejemplo Intermedio 1 • Puntos Clave del Proyecto</span>
+                            <p class="font-semibold mt-1">Explica la importancia de evaluar la <strong>viabilidad económica</strong> antes de aprobar la ejecución de un proyecto comunal.</p>
+                            <p class="text-sm text-gray-700 mt-2 bg-[#F2F5E9] p-2.5 rounded">
+                                <strong>Resolución:</strong> Permite comprobar si los costos totales de materiales, mano de operación e imprevistos están cubiertos por el presupuesto disponible o financiamiento, evitando dejar el proyecto a medias por falta de fondos.
+                            </p>
+                        </div>
+
+                        <div class="card-montano p-4">
+                            <span class="text-xs font-bold text-[#54887D]">Ejemplo Intermedio 2 • Áreas de Conocimiento</span>
+                            <p class="font-semibold mt-1">¿Qué diferencia existe entre gestionar el <strong>alcance</strong> y gestionar el <strong>tiempo</strong> en un proyecto?</p>
+                            <p class="text-sm text-gray-700 mt-2 bg-[#F2F5E9] p-2.5 rounded">
+                                <strong>Resolución:</strong> La gestión del <em>alcance</em> define exactamente qué tareas se harán y cuáles quedan fuera (evitando cambios descontrolados); la gestión del <em>tiempo</em> programa cuándo se ejecutará cada tarea mediante cronogramas.
+                            </p>
+                        </div>
+
+                        <div class="card-montano p-4">
+                            <span class="text-xs font-bold text-[#54887D]">Ejemplo Intermedio 3 • Competencias del Gestor</span>
+                            <p class="font-semibold mt-1">Un equipo de trabajo presenta desacuerdos sobre el reparto de tareas. ¿Qué competencia blanda debe aplicar prioritariamente el gestor del proyecto?</p>
+                            <p class="text-sm text-gray-700 mt-2 bg-[#F2F5E9] p-2.5 rounded">
+                                <strong>Resolución:</strong> La <strong>negociación, comunicación asertiva y resolución de conflictos</strong>, fomentando el consenso y alineando las fortalezas de cada integrante con los objetivos del equipo.
+                            </p>
+                        </div>
+
+                        <div class="card-montano p-4">
+                            <span class="text-xs font-bold text-[#54887D]">Ejemplo Intermedio 4 • Lista de Control (Checklist)</span>
+                            <p class="font-semibold mt-1">Diseña una lista de control breve de 3 puntos para validar el inicio de una campaña de reforestación escolar.</p>
+                            <p class="text-sm text-gray-700 mt-2 bg-[#F2F5E9] p-2.5 rounded">
+                                <strong>Resolución:</strong> <br>
+                                [ ] ¿Se cuenta con la autorización escrita de la dirección del establecimiento?<br>
+                                [ ] ¿Están disponibles los 100 árboles y las herramientas de excavación?<br>
+                                [ ] ¿Se asignó el rol y transporte a cada estudiante brigadista?
+                            </p>
+                        </div>
+
+                        <div class="card-montano p-4 md:col-span-2">
+                            <span class="text-xs font-bold text-[#54887D]">Ejemplo Intermedio 5 • Ciclo de Vida y Cierre</span>
+                            <p class="font-semibold mt-1">¿Por qué es fundamental realizar una fase de <strong>Cierre formal</strong> en todo proyecto aunque ya se hayan entregado los productos?</p>
+                            <p class="text-sm text-gray-700 mt-2 bg-[#F2F5E9] p-2.5 rounded">
+                                <strong>Resolución:</strong> Porque permite evaluar el grado de cumplimiento de los objetivos iniciales, liberar recursos remanentes, documentar lecciones aprendidas y entregar formalmente cuentas a los beneficiarios y patrocinadores.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NIVEL AVANZADO -->
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2">
+                        <span class="badge-amarillo">Nivel Avanzado</span>
+                        <h3 class="text-lg font-bold text-[#54887D]">Diseño Integral, Gestión Sistémica y Casos Complejos</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-4">
+                        <div class="card-montano p-4">
+                            <span class="text-xs font-bold text-[#1269A8]">Ejemplo Avanzado 1 • Integración de Fases del Ciclo de Vida y Puntos Clave</span>
+                            <p class="font-semibold mt-1">Analiza un caso donde un proyecto fracasó en la ejecución porque no se evaluaron correctamente los <em>puntos clave de riesgos y viabilidad</em> en la planificación.</p>
+                            <p class="text-sm text-gray-700 mt-2 bg-[#F2F5E9] p-3 rounded">
+                                <strong>Resolución Integral:</strong> Si un grupo diseña un proyecto de clínica comunitaria sin verificar la viabilidad legal (permisos del Ministerio de Salud) ni los costos de mantenimiento a largo plazo (puntos clave), al llegar a la fase de ejecución el proyecto se detendrá o será clausurado. La fase de planificación falló al omitir la matriz de riesgos y la validación normativa.
+                            </p>
+                        </div>
+
+                        <div class="card-montano p-4">
+                            <span class="text-xs font-bold text-[#1269A8]">Ejemplo Avanzado 2 • Redacción de Objetivos en Cascada (General y Específicos)</span>
+                            <p class="font-semibold mt-1">Escribe el Objetivo General y tres Objetivos Específicos coherentes para un proyecto de 4to. Bachillerato titulado: <em>"Elaboración de guías interactivas de lectura para niños de primaria"</em>.</p>
+                            <p class="text-sm text-gray-700 mt-2 bg-[#F2F5E9] p-3 rounded">
+                                <strong>Resolución Integral:</strong> <br>
+                                • <strong>Objetivo General:</strong> Diseñar e implementar guías de lectura interactivas para fortalecer la comprensión lectora en 30 niños de primer grado primaria.<br>
+                                • <strong>Objetivos Específicos:</strong> 1) Diagnosticar el nivel actual de lectura mediante una prueba piloto. 2) Elaborar contenidos digitales e impresos adaptados a la edad escolar. 3) Evaluar el impacto de las guías al finalizar el bimestre.
+                            </p>
+                        </div>
+
+                        <div class="card-montano p-4">
+                            <span class="text-xs font-bold text-[#1269A8]">Ejemplo Avanzado 3 • Rol del Gestor ante Conflictos Multidimensionales</span>
+                            <p class="font-semibold mt-1">Como gestor de un proyecto escolar, dos miembros de tu equipo chocan por diferencias en la asignación de costos y tiempos. ¿Cómo aplicas las áreas de conocimiento y tus funciones de liderazgo para resolverlo?</p>
+                            <p class="text-sm text-gray-700 mt-2 bg-[#F2F5E9] p-3 rounded">
+                                <strong>Resolución Integral:</strong> El gestor debe convocar a una reunión de revisión del plan de gestión (tiempo y costo). Mediante comunicación asertiva, revisa objetivamente el cronograma y el presupuesto para reasignar tareas según las fortalezas individuales, transformando el conflicto en un compromiso colaborativo respaldado por datos concretos.
+                            </p>
+                        </div>
+
+                        <div class="card-montano p-4">
+                            <span class="text-xs font-bold text-[#1269A8]">Ejemplo Avanzado 4 • Diseño de Diagrama de Flujo y Validación con Checklist</span>
+                            <p class="font-semibold mt-1">Describe los pasos lógicos de un diagrama de flujo para la <em>aprobación de un proyecto de emprendimiento</em> y su respectiva validación en lista de control.</p>
+                            <p class="text-sm text-gray-700 mt-2 bg-[#F2F5E9] p-3 rounded">
+                                <strong>Resolución Integral:</strong> <br>
+                                • <strong>Flujo:</strong> Inicio → Presentación de propuesta → ¿Cumple criterios SMART? (Rombo: Si/No) → Si es No, retroalimentar y corregir; si es Sí, evaluación de presupuesto → Aprobación final y ejecución.<br>
+                                • <strong>Lista de control asociada:</strong> Verificar firma de aprobación, disponibilidad presupuestaria y asignación de responsables antes de pasar a la fase operativa.
+                            </p>
+                        </div>
+
+                        <div class="card-montano p-4">
+                            <span class="text-xs font-bold text-[#1269A8]">Ejemplo Avanzado 5 • Relación de la Subárea con el Contexto Comunal</span>
+                            <p class="font-semibold mt-1">Explica cómo el descriptor del curso de Gestión de Proyectos vincula la teoría escolar con la solución de necesidades familiares o comunales.</p>
+                            <p class="text-sm text-gray-700 mt-2 bg-[#F2F5E9] p-3 rounded">
+                                <strong>Resolución Integral:</strong> Vincula el conocimiento teórico con la práctica al exigir que los estudiantes identifiquen problemas reales de su entorno inmediato (familia, instituto o comunidad), aplicando metodologías formales de gestión para planificar, ejecutar y evaluar soluciones viables y sostenibles.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===================================================================== -->
+            <!-- SECCIÓN 3: EJERCICIOS PRÁCTICOS (15 EJERCICIOS PARA EL ESTUDIANTE)    -->
+            <!-- ===================================================================== -->
+            <section id="ejercicios" class="tab-content space-y-8">
+                <div class="bg-white p-5 rounded-xl border-l-4 border-[#54887D] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <div>
+                        <h2 class="text-2xl font-bold text-[#1269A8]">Taller de Ejercicios Prácticos</h2>
+                        <p class="text-sm text-gray-600">Resuelve cada actividad en tu cuaderno o pizarra y comprueba tus respuestas paso a paso.</p>
+                    </div>
+                    <span class="badge-oliva">15 Ejercicios Graduados</span>
+                </div>
+
+                <!-- BLOQUE BÁSICO (1 - 5) -->
+                <div class="space-y-3">
+                    <h3 class="text-lg font-bold text-[#1269A8] border-b border-gray-300 pb-1">🟢 Nivel Básico (Ejercicios 1 al 5)</h3>
+                    
+                    <div class="card-ejercicio p-4">
+                        <p class="font-bold text-[#1269A8]">Ejercicio 1 (Naturaleza del Proyecto):</p>
+                        <p class="text-sm mt-1">Indica si la siguiente afirmación es verdadera o falsa y justifica: <em>"Una rutina diaria de limpieza escolar es un proyecto porque requiere esfuerzo humano."</em></p>
+                        <button class="btn-solucion mt-3 text-xs" onclick="toggleSolucion('sol-gp1', this)">👁️ Mostrar solución</button>
+                        <div id="sol-gp1" class="caja-solucion text-sm">
+                            <strong>Solución:</strong> Es <strong>falsa</strong>. La limpieza diaria es una operación rutinaria y continua (se repite indefinidamente), mientras que un proyecto se caracteriza por ser <em>temporal</em> y generar un resultado único.
+                        </div>
+                    </div>
+
+                    <div class="card-ejercicio p-4">
+                        <p class="font-bold text-[#1269A8]">Ejercicio 2 (Objetivos de un Proyecto):</p>
+                        <p class="text-sm mt-1">¿Qué diferencia principal existe entre un <strong>Objetivo General</strong> y un <strong>Objetivo Específico</strong>?</p>
+                        <button class="btn-solucion mt-3 text-xs" onclick="toggleSolucion('sol-gp2', this)">👁️ Mostrar solución</button>
+                        <div id="sol-gp2" class="caja-solucion text-sm">
+                            <strong>Solución:</strong> El <em>Objetivo General</em> expresa la meta global y propósito central del proyecto; los <em>Objetivos Específicos</em> detallan los pasos parciales, medibles y operativos necesarios para alcanzar el objetivo general.
+                        </div>
+                    </div>
+
+                    <div class="card-ejercicio p-4">
+                        <p class="font-bold text-[#1269A8]">Ejercicio 3 (Ciclo de Vida):</p>
+                        <p class="text-sm mt-1">Ordena cronológicamente las <strong>cuatro fases principales del ciclo de vida</strong> de un proyecto: <em>Ejecución, Cierre, Inicio, Planificación</em>.</p>
+                        <button class="btn-solucion mt-3 text-xs" onclick="toggleSolucion('sol-gp3', this)">👁️ Mostrar solución</button>
+                        <div id="sol-gp3" class="caja-solucion text-sm">
+                            <strong>Solución:</strong> 1. Inicio → 2. Planificación → 3. Ejecución → 4. Cierre.
+                        </div>
+                    </div>
+
+                    <div class="card-ejercicio p-4">
+                        <p class="font-bold text-[#1269A8]">Ejercicio 4 (Gestor del Proyecto):</p>
+                        <p class="text-sm mt-1">Menciona <strong>dos competencias blandas</strong> indispensables que debe poseer un gestor de proyectos exitoso.</p>
+                        <button class="btn-solucion mt-3 text-xs" onclick="toggleSolucion('sol-gp4', this)">👁️ Mostrar solución</button>
+                        <div id="sol-gp4" class="caja-solucion text-sm">
+                            <strong>Solución:</strong> Liderazgo, comunicación efectiva, empatía, trabajo en equipo, capacidad de organización, adaptabilidad o resolución de conflictos (cualquiera de estas).
+                        </div>
+                    </div>
+
+                    <div class="card-ejercicio p-4">
+                        <p class="font-bold text-[#1269A8]">Ejercicio 5 (Lista de Control):</p>
+                        <p class="text-sm mt-1">¿Para qué sirve una <strong>lista de control (checklist)</strong> antes de iniciar la ejecución de un proyecto?</p>
+                        <button class="btn-solucion mt-3 text-xs" onclick="toggleSolucion('sol-gp5', this)">👁️ Mostrar solución</button>
+                        <div id="sol-gp5" class="caja-solucion text-sm">
+                            <strong>Solución:</strong> Sirve para verificar de forma rápida y sistemática que se han cumplido todos los requisitos previos, insumos, permisos y tareas preparatorias, evitando omisiones que detengan el proyecto.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BLOQUE INTERMEDIO (6 - 10) -->
+                <div class="space-y-3">
+                    <h3 class="text-lg font-bold text-[#1269A8] border-b border-gray-300 pb-1">🟡 Nivel Intermedio (Ejercicios 6 al 10)</h3>
+
+                    <div class="card-ejercicio p-4">
+                        <p class="font-bold text-[#1269A8]">Ejercicio 6 (Puntos Clave):</p>
+                        <p class="text-sm mt-1">Explica en qué consiste evaluar la <strong>viabilidad técnica</strong> de un proyecto tecnológico.</p>
+                        <button class="btn-solucion mt-3 text-xs" onclick="toggleSolucion('sol-gp6', this)">👁️ Mostrar solución</button>
+                        <div id="sol-gp6" class="caja-solucion text-sm">
+                            <strong>Solución:</strong> Consiste en comprobar si se cuenta con la tecnología adecuada, el software, el hardware, las herramientas y los conocimientos técnicos necesarios para desarrollar el proyecto con éxito sin limitaciones insuperables.
+                        </div>
+                    </div>
+
+                    <div class="card-ejercicio p-4">
+                        <p class="font-bold text-[#1269A8]">Ejercicio 7 (Áreas de Conocimiento):</p>
+                        <p class="text-sm mt-1">Relaciona cada área de gestión con su enfoque principal: <em>(a) Costo, (b) Riesgos, (c) Calidad</em>.</p>
+                        <button class="btn-solucion mt-3 text-xs" onclick="toggleSolucion('sol-gp7', this)">👁️ Mostrar solución</button>
+                        <div id="sol-gp7" class="caja-solucion text-sm">
+                            <strong>Solución:</strong> a) <em>Costo:</em> Controlar el presupuesto y los gastos del proyecto. | b) <em>Riesgos:</em> Anticipar eventos imprevistos y planificar planes de mitigación. | c) <em>Calidad:</em> Asegurar que el producto cumpla con los estándares acordados.
+                        </div>
+                    </div>
+
+                    <div class="card-ejercicio p-4">
+                        <p class="font-bold text-[#1269A8]">Ejercicio 8 (Diagrama de Flujo):</p>
+                        <p class="text-sm mt-1">¿Qué símbolo de diagrama de flujo se utiliza para indicar el <strong>inicio y el fin</strong> de los procesos de un proyecto?</p>
+                        <button class="btn-solucion mt-3 text-xs" onclick="toggleSolucion('sol-gp8', this)">👁️ Mostrar solución</button>
+                        <div id="sol-gp8" class="caja-solucion text-sm">
+                            <strong>Solución:</strong> El <strong>óvalo</strong> (o círculo alargado).
+                        </div>
+                    </div>
+
+                    <div class="card-ejercicio p-4">
+                        <p class="font-bold text-[#1269A8]">Ejercicio 9 (Funciones del Gestor):</p>
+                        <p class="text-sm mt-1">Menciona <strong>dos funciones principales</strong> del gestor durante la fase de ejecución de un proyecto.</p>
+                        <button class="btn-solucion mt-3 text-xs" onclick="toggleSolucion('sol-gp9', this)">👁️ Mostrar solución</button>
+                        <div id="sol-gp9" class="caja-solucion text-sm">
+                            <strong>Solución:</strong> 1) Coordinar al equipo de trabajo asegurando el cumplimiento de tareas; 2) Monitorear el avance respecto al cronograma y presupuesto tomando decisiones correctivas ante imprevistos.
+                        </div>
+                    </div>
+
+                    <div class="card-ejercicio p-4">
+                        <p class="font-bold text-[#1269A8]">Ejercicio 10 (Características de Proyectos):</p>
+                        <p class="text-sm mt-1">Explica por qué un proyecto surge a partir de una <strong>necesidad identificada por el grupo</strong> (como se indica en el descriptor del curso).</p>
+                        <button class="btn-solucion mt-3 text-xs" onclick="toggleSolucion('sol-gp10', this)">👁️ Mostrar solución</button>
+                        <div id="sol-gp10" class="caja-solucion text-sm">
+                            <strong>Solución:</strong> Porque los proyectos no se inventan al azar, sino que nacen de detectar problemas reales o carencias en la familia, el colegio o la comunidad, orientando todos los esfuerzos a darles una solución práctica.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BLOQUE AVANZADO (11 - 15) -->
+                <div class="space-y-3">
+                    <h3 class="text-lg font-bold text-[#1269A8] border-b border-gray-300 pb-1">🔴 Nivel Avanzado (Ejercicios 11 al 15)</h3>
+
+                    <div class="card-ejercicio p-4">
+                        <p class="font-bold text-[#1269A8]">Ejercicio 11 (Formulación de Objetivos SMART):</p>
+                        <p class="text-sm mt-1">Evalúa y corrige el siguiente objetivo según los criterios SMART: <em>"Hacer un proyecto bonito para ayudar a la comunidad algún día."</em></p>
+                        <button class="btn-solucion mt-3 text-xs" onclick="toggleSolucion('sol-gp11', this)">👁️ Mostrar solución</button>
+                        <div id="sol-gp11" class="caja-solucion text-sm">
+                            <strong>Solución:</strong> El objetivo original incumple todos los criterios SMART (no es específico, medible, alcanzable, relevante ni tiene tiempo definido). <strong>Corrección Modelo:</strong> <em>"Diseñar y construir un sistema de recolección de agua pluvial en el centro comunal durante los meses de febrero y marzo de 2027 para beneficiar a 40 familias."</em>
+                        </div>
+                    </div>
+
+                    <div class="card-ejercicio p-4">
+                        <p class="font-bold text-[#1269A8]">Ejercicio 12 (Ciclo de Vida y Entregables):</p>
+                        <p class="text-sm mt-1">Explica qué entregable clave debe producirse al finalizar la fase de <strong>Planificación</strong> antes de pasar a la Ejecución.</p>
+                        <button class="btn-solucion mt-3 text-xs" onclick="toggleSolucion('sol-gp12', this)">👁️ Mostrar solución</button>
+                        <div id="sol-gp12" class="caja-solucion text-sm">
+                            <strong>Solución:</strong> El <em>Plan de Gestión del Proyecto</em> (que incluye el cronograma de actividades, presupuesto detallado, asignación de roles y matriz de riesgos).
+                        </div>
+                    </div>
+
+                    <div class="card-ejercicio p-4">
+                        <p class="font-bold text-[#1269A8]">Ejercicio 13 (Diagrama de Flujo Condicional):</p>
+                        <p class="text-sm mt-1">Diseña mentalmente y describe una estructura condicional (con rombo) dentro de un diagrama de flujo para la compra de materiales de un proyecto.</p>
+                        <button class="btn-solucion mt-3 text-xs" onclick="toggleSolucion('sol-gp13', this)">👁️ Mostrar solución</button>
+                        <div id="sol-gp13" class="caja-solucion text-sm">
+                            <strong>Solución:</strong> Proceso: Solicitar cotización → Decisión (Rombo): <em>¿El costo está dentro del presupuesto aprobado?</em> → Si es <strong>Sí</strong>: Proceder a la compra. Si es <strong>No</strong>: Buscar proveedores alternativos o ajustar diseño.
+                        </div>
+                    </div>
+
+                    <div class="card-ejercicio p-4">
+                        <p class="font-bold text-[#1269A8]">Ejercicio 14 (Gestión de Riesgos):</p>
+                        <p class="text-sm mt-1">Identifica un riesgo potencial para un proyecto de feria científica al aire libre y plantea una medida preventiva (mitigación).</p>
+                        <button class="btn-solucion mt-3 text-xs" onclick="toggleSolucion('sol-gp14', this)">👁️ Mostrar solución</button>
+                        <div id="sol-gp14" class="caja-solucion text-sm">
+                            <strong>Solución:</strong> <em>Riesgo:</em> Lluvia imprevista que dañe los materiales de exposición. <em>Medida preventiva (Mitigación):</em> Contar con toldos impermeables de respaldo y planificar un espacio alternativo bajo techo en el instituto.
+                        </div>
+                    </div>
+
+                    <div class="card-ejercicio p-4">
+                        <p class="font-bold text-[#1269A8]">Ejercicio 15 (Evaluación y Cierre):</p>
+                        <p class="text-sm mt-1">¿Por qué el indicador de logro <em>"Evalúa los resultados del proyecto implementado y elabora el informe de resultados"</em> es la culminación del proceso de aprendizaje en 4to. Bachillerato?</p>
+                        <button class="btn-solucion mt-3 text-xs" onclick="toggleSolucion('sol-gp15', this)">👁️ Mostrar solución</button>
+                        <div id="sol-gp15" class="caja-solucion text-sm">
+                            <strong>Solución:</strong> Porque demuestra la capacidad del estudiante no solo de planificar en teoría, sino de llevar a cabo una intervención real en su entorno, reflexionando críticamente sobre el impacto logrado y consolidando competencias profesionales y blandas para su futuro.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===================================================================== -->
+            <!-- SECCIÓN 4: PREGUNTAS DE REFLEXIÓN CRÍTICA                             -->
+            <!-- ===================================================================== -->
+            <section id="reflexion" class="tab-content space-y-6">
+                <div class="bg-white p-6 rounded-xl border-l-4 border-[#F7D615] shadow-sm">
+                    <h2 class="text-2xl font-bold text-[#1269A8]">Preguntas de Reflexión Crítica y Pensamiento Lógico</h2>
+                    <p class="text-sm text-gray-600 mt-1">Cuestionamientos abiertos para debate en clase, plenarias o bitácora de proyectos.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="card-montano p-5 space-y-3">
+                        <span class="badge-azul">1. Planificación vs. Improvisación</span>
+                        <h3 class="text-lg font-bold text-[#1269A8]">¿Por qué fracasan los proyectos que omiten la planificación?</h3>
+                        <p class="text-sm text-gray-700 leading-relaxed">
+                            Muchas personas prefieren saltarse la fase de planificación y empezar a ejecutar de inmediato. Reflexiona: ¿Qué consecuencias reales traen la falta de cronograma, presupuesto y objetivos claros en un proyecto gestionado por estudiantes o emprendedores?
+                        </p>
+                    </div>
+
+                    <div class="card-montano p-5 space-y-3">
+                        <span class="badge-oliva">2. Liderazgo y Trabajo en Equipo</span>
+                        <h3 class="text-lg font-bold text-[#1269A8]">El rol del gestor: ¿jefe o líder colaborador?</h3>
+                        <p class="text-sm text-gray-700 leading-relaxed">
+                            En el descriptor del curso se destaca la importancia del trabajo en equipo, la colaboración y la empatía. ¿Por qué un buen gestor de proyectos debe inspirar y coordinar en lugar de simplemente dar órdenes autoritarias?
+                        </p>
+                    </div>
+
+                    <div class="card-montano p-5 space-y-3">
+                        <span class="badge-azul">3. Impacto Comunitario</span>
+                        <h3 class="text-lg font-bold text-[#1269A8]">Proyectos que transforman realidades</h3>
+                        <p class="text-sm text-gray-700 leading-relaxed">
+                            El propósito de la subárea es identificar problemas reales en la comunidad o entorno para darles una solución práctica. ¿Cómo puede un proyecto escolar de 4to. Bachillerato generar un cambio duradero en una familia o en el Colegio Montano?
+                        </p>
+                    </div>
+
+                    <div class="card-montano p-5 space-y-3">
+                        <span class="badge-oliva">4. Pensamiento Sistémico en la Gestión</span>
+                        <h3 class="text-lg font-bold text-[#1269A8]">La interconexión de las Áreas de Conocimiento</h3>
+                        <p class="text-sm text-gray-700 leading-relaxed">
+                            Si en un proyecto se reduce el presupuesto (costo) sin cambiar el alcance, ¿cómo impacta esto automáticamente en la calidad y en el tiempo de entrega? Analiza por qué un gestor debe ver el proyecto como un sistema integrado.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===================================================================== -->
+            <!-- SECCIÓN 5: EVALUACIÓN FORMATIVA CON SOLUCIONES OCULTAS                 -->
+            <!-- ===================================================================== -->
+            <section id="evaluacion" class="tab-content space-y-6">
+                <div class="bg-white p-5 rounded-xl border-2 border-[#1269A8] flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-[#1269A8]">Evaluación Formativa de Comprobación (Unidad 1)</h2>
+                        <p class="text-sm text-gray-600">Resuelve cada reactivo integrador y verifica tu procedimiento desplegando la solución paso a paso.</p>
+                    </div>
+                    <span class="badge-amarillo">5 Reactivos Integradores</span>
+                </div>
+
+                <div class="space-y-4">
+                    <!-- REACTIVO 1 -->
+                    <div class="card-ejercicio p-5">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="badge-azul">Reactivo 1 • Naturaleza y Objetivos de Proyectos</span>
+                            <span class="text-xs font-bold text-[#54887D]">Valor sugerido: 20%</span>
+                        </div>
+                        <p class="font-semibold text-gray-800">Analiza el siguiente planteamiento: Un equipo de estudiantes de 4to. Bachillerato observa que en su comunidad hay escasez de botes de basura públicos, lo que genera contaminación. (a) ¿Por qué esta situación justifica la creación de un <em>proyecto</em>? (b) Redacta el <em>Objetivo General</em> correcto para dar solución a este problema.</p>
+                        <button class="btn-solucion mt-2 text-sm" onclick="toggleSolucion('sol-gpeval1', this)">
+                            👁️ Mostrar solución
+                        </button>
+                        <div id="sol-gpeval1" class="caja-solucion text-sm space-y-1">
+                            <p><strong>Paso 1 (Justificación):</strong> Justifica un proyecto porque existe una necesidad real y delimitada en la comunidad que requiere un esfuerzo temporal para diseñar, elaborar e instalar una solución única.</p>
+                            <p><strong>Paso 2 (Objetivo General):</strong> <em>"Diseñar e instalar 5 estaciones de reciclaje y botes de basura en puntos estratégicos de la comunidad durante el primer bimestre para reducir la acumulación de desechos."</em></p>
+                        </div>
+                    </div>
+
+                    <!-- REACTIVO 2 -->
+                    <div class="card-ejercicio p-5">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="badge-azul">Reactivo 2 • Ciclo de Vida y Puntos Clave</span>
+                            <span class="text-xs font-bold text-[#54887D]">Valor sugerido: 20%</span>
+                        </div>
+                        <p class="font-semibold text-gray-800">Un proyecto de emprendimiento escolar ha avanzado a la fase de <em>Ejecución</em>, pero los estudiantes notan que no calcularon bien el costo de los materiales y se quedaron sin fondos. (a) ¿Qué punto clave y fase del ciclo de vida se omitió o falló? (b) ¿Qué debieron hacer para prevenirlo?</p>
+                        <button class="btn-solucion mt-2 text-sm" onclick="toggleSolucion('sol-gpeval2', this)">
+                            👁️ Mostrar solución
+                        </button>
+                        <div id="sol-gpeval2" class="caja-solucion text-sm space-y-1">
+                            <p><strong>a) Fase y punto clave fallido:</strong> Falló la fase de <strong>Planificación</strong> y el punto clave de <em>viabilidad financiera / presupuesto</em>.</p>
+                            <p><strong>b) Prevención:</strong> Debieron elaborar un presupuesto detallado con cotizaciones reales y un margen de imprevistos (riesgos) antes de dar inicio a la ejecución.</p>
+                        </div>
+                    </div>
+
+                    <!-- REACTIVO 3 -->
+                    <div class="card-ejercicio p-5">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="badge-azul">Reactivo 3 • Áreas de Conocimiento y Gestor</span>
+                            <span class="text-xs font-bold text-[#54887D]">Valor sugerido: 20%</span>
+                        </div>
+                        <p class="font-semibold text-gray-800">Durante el desarrollo del proyecto, el cronograma se atrasa una semana porque un integrante del equipo no entregó su parte a tiempo. (a) ¿Qué áreas de conocimiento de la gestión se ven afectadas? (b) ¿Cómo debe actuar el gestor del proyecto?</p>
+                        <button class="btn-solucion mt-2 text-sm" onclick="toggleSolucion('sol-gpeval3', this)">
+                            👁️ Mostrar solución
+                        </button>
+                        <div id="sol-gpeval3" class="caja-solucion text-sm space-y-1">
+                            <p><strong>a) Áreas afectadas:</strong> Gestión del <em>Tiempo</em> (cronograma) y gestión de <em>Recursos Humanos</em> (desempeño del equipo).</p>
+                            <p><strong>b) Actuación del gestor:</strong> Aplicar comunicación asertiva y empatía para conocer las causas del retraso, reorganizar las tareas de apoyo y ajustar los plazos sin comprometer la calidad del producto final.</p>
+                        </div>
+                    </div>
+
+                    <!-- REACTIVO 4 -->
+                    <div class="card-ejercicio p-5">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="badge-azul">Reactivo 4 • Diagrama de Flujo y Procesos</span>
+                            <span class="text-xs font-bold text-[#54887D]">Valor sugerido: 20%</span>
+                        </div>
+                        <p class="font-semibold text-gray-800">Dibuja mentalmente y describe los tres símbolos básicos que intervienen en un diagrama de flujo para la aprobación de una tarea de proyecto, indicando la función de cada uno.</p>
+                        <button class="btn-solucion mt-2 text-sm" onclick="toggleSolucion('sol-gpeval4', this)">
+                            👁️ Mostrar solución
+                        </button>
+                        <div id="sol-gpeval4" class="caja-solucion text-sm space-y-1">
+                            <p><strong>1) Óvalo:</strong> Indica el inicio y el fin del proceso de revisión.</p>
+                            <p><strong>2) Rectángulo:</strong> Representa la acción de revisión o entrega de la tarea por parte del equipo.</p>
+                            <p><strong>3) Rombo:</strong> Plantea la condición decisoria (<em>¿La tarea cumple con los estándares de calidad? Sí / No</em>).</p>
+                        </div>
+                    </div>
+
+                    <!-- REACTIVO 5 -->
+                    <div class="card-ejercicio p-5">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="badge-azul">Reactivo 5 • Lista de Control y Cierre de Unidad</span>
+                            <span class="text-xs font-bold text-[#54887D]">Valor sugerido: 20%</span>
+                        </div>
+                        <p class="font-semibold text-gray-800">Diseña una <strong>Lista de Control (Checklist) de 4 ítems</strong> que todo equipo de 4to. Bachillerato debe completar antes de dar por finalizada la Unidad 1 y presentar su perfil de proyecto.</p>
+                        <button class="btn-solucion mt-2 text-sm" onclick="toggleSolucion('sol-gpeval5', this)">
+                            👁️ Mostrar solución
+                        </button>
+                        <div id="sol-gpeval5" class="caja-solucion text-sm space-y-1">
+                            <p><strong>Checklist de Cierre de Unidad 1:</strong></p>
+                            <p class="bg-[#F2F5E9] p-2.5 rounded font-medium space-y-1">
+                                [ ] 1. ¿Está redactado el planteamiento del problema y la necesidad identificada?<br>
+                                [ ] 2. ¿Se formularon el Objetivo General y los Específicos bajo metodología SMART?<br>
+                                [ ] 3. ¿Se identificaron las fases del ciclo de vida y los puntos clave de viabilidad?<br>
+                                [ ] 4. ¿Se diseñó el diagrama de flujo y la lista de control operativa del proyecto?
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- PIE DE PIZARRA INSTITUCIONAL -->
+        <footer class="bg-white border-t border-gray-200 px-6 py-3 text-xs text-gray-500 flex flex-col sm:flex-row justify-between items-center gap-2">
+            <span><strong>Colegio Montano Cortijo</strong> • Plataforma Educativa Canvas</span>
+            <span>Docente: Stephany Godoy • Gestión y Elaboración de Proyectos (4to. Bachillerato)</span>
+        </footer>
+
+    </div>
+
+    <!-- LÓGICA INTERACTIVA (PESTAÑAS, SOLUCIONES Y FULLSCREEN API) -->
+    <script>
+        /**
+         * Cambia dinámicamente entre las pestañas horizontales de la pizarra.
+         * @param {Event} evt - Evento de clic del botón.
+         * @param {string} tabId - ID de la sección a mostrar.
+         */
+        function openTab(evt, tabId) {
+            const tabContents = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove("active");
+            }
+
+            const tabButtons = document.getElementsByClassName("tab-btn");
+            for (let i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].classList.remove("active");
+            }
+
+            document.getElementById(tabId).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        /**
+         * Alterna la visibilidad de las cajas de solución paso a paso.
+         * @param {string} idSolucion - ID del contenedor de la solución.
+         * @param {HTMLElement} btn - Botón presionado para actualizar su etiqueta.
+         */
+        function toggleSolucion(idSolucion, btn) {
+            const caja = document.getElementById(idSolucion);
+            const estaVisible = caja.classList.contains("visible");
+
+            if (estaVisible) {
+                caja.classList.remove("visible");
+                btn.innerHTML = "👁️ Mostrar solución";
+                btn.style.backgroundColor = "#1269A8";
+            } else {
+                caja.classList.add("visible");
+                btn.innerHTML = "🙈 Ocultar solución";
+                btn.style.backgroundColor = "#54887D";
+            }
+        }
+
+        /**
+         * Activa o desactiva el modo pantalla completa usando Fullscreen API.
+         */
+        function toggleFullscreen() {
+            const fsText = document.getElementById("fsText");
+            const fsIcon = document.getElementById("fsIcon");
+
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().then(() => {
+                    fsText.textContent = "Salir de pantalla completa";
+                    fsIcon.textContent = "✖";
+                }).catch((err) => {
+                    console.warn("No se pudo activar pantalla completa:", err.message);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen().then(() => {
+                        fsText.textContent = "Pantalla completa";
+                        fsIcon.textContent = "⛶";
+                    });
+                }
+            }
+        }
+
+        // Sincronizar texto del botón si el usuario sale con la tecla ESC
+        document.addEventListener("fullscreenchange", () => {
+            const fsText = document.getElementById("fsText");
+            const fsIcon = document.getElementById("fsIcon");
+            if (!document.fullscreenElement) {
+                fsText.textContent = "Pantalla completa";
+                fsIcon.textContent = "⛶";
+            }
+        });
+    </script>
+</body>
+</html>
